@@ -84,15 +84,17 @@ jobs:
           meshName=Consul
           smpMeshName=CONSUL
           template='{"apiVersion":"core.oam.dev/v1alpha1","kind":"WorkloadDefinition","metadata":{},"spec":{"definitionRef":{},"metadata":{"@type":"pattern.meshery.io/mesh/workload","meshVersion":"'v$NEW_CONSUL_VERSION'","meshName":"'$smpMeshName'","k8sAPIVersion":null,"k8sKind":""}}}'
-          crds=$(./kubeopenapi-jsonschema --location ~/consul.yml -t yaml --filter '$[?(@.kind=="CustomResourceDefinition")]' -o json --o-filter '$..["spec"]["names"]["kind"]' | jq '.[]')
+          crds=$(./kubeopenapi-jsonschema --location ~/consul.yaml -t yaml --filter '$[?(@.kind=="CustomResourceDefinition")]' -o json --o-filter '$..["spec"]["names"]["kind"]' | jq '.[]')
           for t in ${crds[@]}; do
             nameUpper=`echo $t  | tr -d '"'`
             nameLower=`echo $t  | tr -d '"' | tr '[:upper:]' '[:lower:]'`
             definitionRef=$(printf %s.consul.meshery.layer5.io $nameLower)
-            apiVersion=$(./kubeopenapi-jsonschema --location ~/consul.yml -t yaml --filter '$[?(@.kind=="CustomResourceDefinition" && @.spec.names.kind=='$t')]..spec.versions[0]' --o-filter "$[].name" -o json | jq '.[]' | tr -d '"')
-            apiGroup=$(./kubeopenapi-jsonschema --location ~/consul.yml -t yaml --filter '$[?(@.kind=="CustomResourceDefinition" && @.spec.names.kind=='$t')]..spec' --o-filter "$[].group" -o json | jq '.[]' | tr -d '"')
 
-            ./kubeopenapi-jsonschema --location ~/consul.yml -t yaml --filter '$[?(@.kind=="CustomResourceDefinition" && @.spec.names.kind=='$t')]..openAPIV3Schema.properties.spec' --o-filter "$[]" -o json |\
+            apiVersion=$(./kubeopenapi-jsonschema --location ~/consul.yaml -t yaml --filter '$[?(@.kind=="CustomResourceDefinition" && @.spec.names.kind=='$t')]..spec.versions[0]' --o-filter "$[].name" -o json | jq '.[]' | tr -d '"')
+
+            apiGroup=$(./kubeopenapi-jsonschema --location ~/consul.yaml -t yaml --filter '$[?(@.kind=="CustomResourceDefinition" && @.spec.names.kind=='$t')]..spec' --o-filter "$[].group" -o json | jq '.[]' | tr -d '"')
+
+            ./kubeopenapi-jsonschema --location ~/consul.yaml -t yaml --filter '$[?(@.kind=="CustomResourceDefinition" && @.spec.names.kind=='$t')]..openAPIV3Schema.properties.spec' --o-filter "$[]" -o json |\
             jq '.[]' > $dirPath/$nameLower.consul.meshery.layer5io.schema.json
 
             echo $template |\
