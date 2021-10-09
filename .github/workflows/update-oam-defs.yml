@@ -22,7 +22,7 @@ jobs:
         id: glrt
         run:
           helm repo add hashicorp https://helm.releases.hashicorp.com;
-          helm update;
+          helm repo update;
           RELEASE_METADATA=$(helm search repo hashicorp/consul --versions | sed -n 5p$'\n' | sed -e 's/\s/;/g' | tr -s ';');
           echo "NEW_CONSUL_CHART_VERSION=`echo $RELEASE_METADATA | cut -d ';' -f2`" >> $GITHUB_ENV;
           echo "NEW_CONSUL_VERSION=`echo $RELEASE_METADATA | cut -d ';' -f3`" >> $GITHUB_ENV;
