@@ -36,9 +36,9 @@ jobs:
         run: |
           if [ -d templates/oam/workloads/${{ env.NEW_CONSUL_VERSION }} ]
           then
-            echo "EXISTS=true" > $GITHUB_ENV
+            echo "EXISTS=true" >> $GITHUB_ENV
           else
-            export "EXISTS=false" > $GITHUB_ENV
+            export "EXISTS=false" >> $GITHUB_ENV
           fi
 
   generator:
