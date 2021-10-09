@@ -23,7 +23,7 @@ jobs:
         run:
           helm repo add hashicorp https://helm.releases.hashicorp.com;
           helm repo update;
-          RELEASE_METADATA=$(helm search repo hashicorp/consul --versions | sed -n 5p$'\n' | sed -e 's/\s/;/g' | tr -s ';');
+          RELEASE_METADATA=$(helm search repo hashicorp/consul --versions | sed -n 2p$'\n' | sed -e 's/\s/;/g' | tr -s ';');
           echo "NEW_CONSUL_CHART_VERSION=`echo $RELEASE_METADATA | cut -d ';' -f2`" >> $GITHUB_ENV;
           echo "NEW_CONSUL_VERSION=`echo $RELEASE_METADATA | cut -d ';' -f3`" >> $GITHUB_ENV;
 
@@ -60,7 +60,7 @@ jobs:
         run: |
           mkdir ./consul-crds
           cd ./consul-crds
-          curl --silent --remote-name-all `curl --silent -H "Accept: application/vnd.github.VERSION.raw" https://api.github.com/repos/hashicorp/consul-k8s/contents/control-plane/config/crd/bases\?ref\=v$NEW_CONSUL_CHART_VERSION | jq 'map(.download_url) | .[]' | tr -d '"'`;
+          curl --silent --remote-name-all `curl --silent -H "Accept: application/vnd.github.VERSION.raw" https://api.github.com/repos/hashicorp/consul-k8s/contents/control-plane/config/crd/bases\?ref\=$(printf v%s $NEW_CONSUL_CHART_VERSION) | jq 'map(.download_url) | .[]' | tr -d '"'`;
           cd ..
           awk 'FNR==1 && NR>1 { printf("\n%s\n\n","---") } 1' consul-crds/*.yaml > ~/consul.yaml
 
