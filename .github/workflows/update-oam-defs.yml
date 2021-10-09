@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Setup Helm
         id: sh
-        uses: azure/setup-helm@master
+        uses: azure/setup-helm@v1
 
       # retrieves consul version from helm charts
       - name: Get Consul Latest Release Metadata
