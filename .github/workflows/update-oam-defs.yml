@@ -60,7 +60,7 @@ jobs:
         run: |
           mkdir ./consul-crds
           cd ./consul-crds
-          curl --silent --remote-name-all `curl --silent -H "Accept: application/vnd.github.VERSION.raw" https://api.github.com/repos/hashicorp/consul-k8s/contents/control-plane/config/crd/bases\?ref\=v${NEW_CONSUL_CHART_VERSION} | jq 'map(.download_url) | .[]' | tr -d '"'`;
+          curl --silent --remote-name-all `curl --silent -H "Accept: application/vnd.github.VERSION.raw" https://api.github.com/repos/hashicorp/consul-k8s/contents/control-plane/config/crd/bases\?ref\=v$NEW_CONSUL_CHART_VERSION | jq 'map(.download_url) | .[]' | tr -d '"'`;
           cd ..
           awk 'FNR==1 && NR>1 { printf("\n%s\n\n","---") } 1' consul-crds/*.yaml > ~/consul.yaml
 
